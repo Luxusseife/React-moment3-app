@@ -67,14 +67,16 @@ li {
     font-weight: bold;
 }
 
+button {
+    border: none;
+    font-size: 1em;
+    background-color: transparent;
+    cursor: pointer;
+}
+
 .active {
     background-color: #1f3a8d;
     color: #ffffff;
-}
-
-.active:hover {
-    background-color: #ffdc00;
-    color: #000000;
 }
 
 .container {
@@ -145,6 +147,10 @@ footer {
     ul {
         padding-top: 1rem;
         flex-direction: row;
+    }
+
+    button.navlink {
+        padding: 0;
     }
 }
 

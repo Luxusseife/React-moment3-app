@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, ReactNode } from "react";
+import { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { User, LoginCredentials, AuthResponse, AuthContextType } from "../types/auth.types";
 
 // Skapar en context för autentisering.
@@ -56,6 +56,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Ställer user till null, dvs. reset av användare.
         setUser(null);
     }
+
+    // Validerar token för inloggad användare.
+    const validateToken = async () => {
+        const token = localStorage.getItem("token");
+
+        // Kontrollerar om token finns lagrad.
+        if (!token) {
+            return;
+        }
+
+        // Försöker autentisera användaren genom API-anrop till servern.
+        try {
+            const res = await fetch("http://localhost:3001/validate-token", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            // Vid lyckat anrop och positivt svar..
+            if (res.ok) {
+                const data = await res.json();
+
+                // Ställer in user som aktuell användare.
+                setUser(data.user);
+            }
+        // Vid autentiseringsfel/ogiltig token...
+        } catch (error) {
+            // Tar bort token från localStorage.
+            localStorage.removeItem("token");
+
+            // Ställer user till null, dvs. reset av användare.
+            setUser(null);
+        }
+    }
+
+    // Validerar token vid sidladdning.
+    useEffect(() => {
+        validateToken();
+    }, [])
 
     // Delar användarens inloggningsuppgifter och funktioner för att logga in och ut.
     return (
