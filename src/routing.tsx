@@ -5,7 +5,9 @@ import SingleProductPage from "./pages/SingleProductPage";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
+// Nedan är admin skyddad resurs som endast är åtkomlig efter inloggning.
 const router = createBrowserRouter([
     {
         path: "/",
@@ -25,7 +27,10 @@ const router = createBrowserRouter([
             },
             {
                 path: "/admin",
-                element: <AdminPage/>
+                element:
+                    <ProtectedRoute>
+                        <AdminPage />
+                    </ProtectedRoute>
             },
             {
                 path: "/login",
