@@ -1,15 +1,7 @@
 import { useState, useEffect } from "react";
 import Item from "../components/Item";
 import "./HomePage.css";
-
-// Skapar ett interface för produktstrukturen.
-export interface ItemInterface {
-  _id?: string,
-  name: string,
-  category: string,
-  price: number,
-  status: boolean
-}
+import { ItemInterface } from "../types/item.types";
 
 const HomePage = () => {
 

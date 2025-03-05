@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ItemInterface } from "./HomePage";
+import { ItemInterface } from "../types/item.types";
 import "./ItemPage.css";
 
 const ItemPage = () => {

@@ -1,6 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
-import { ItemInterface } from "./HomePage";
+import { ItemInterface } from "../types/item.types";
 import Item from "../components/Item";
 import "./AdminPage.css";
 
