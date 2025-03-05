@@ -1,8 +1,17 @@
-.item-section {
-   background-color: #e5eafa;
-   box-shadow: 2px 2px 4px black;
+.item-section, 
+.item-section-admin {
+   background-color: #ecf0fa;
+   box-shadow: 2px 2px 5px #091128;
    padding: 1rem;
+   border-radius: 10px;
+}
+
+.item-section {
    margin: 1rem;
+}
+
+.item-section-admin {
+   margin: 0.5rem;
 }
 
 .item-link {
@@ -10,3 +19,40 @@
    color: inherit;
    cursor: pointer;
 }
+
+.item-section:hover {
+   background-color: #dee7fe;
+}
+
+.button-container-item {
+   display: flex;
+   gap: 1rem;
+   margin-top: 0.5rem;
+}
+
+.update-button, .delete-button {
+   color: #000000;
+   text-decoration: none;
+   border-radius: 5px;
+   font-weight: bold;
+   cursor: pointer;
+}
+
+.update-button {
+   background-color: #ffdc00;
+   padding: 0.5rem 1.25rem;
+}
+
+.update-button:hover {
+   background-color: #f9cb00;
+}
+
+.delete-button {
+   background-color: #ec6161;
+   padding: 0.5rem 1rem;
+}
+
+.delete-button:hover {
+   background-color: #e73a3a;
+}
+

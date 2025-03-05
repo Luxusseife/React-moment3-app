@@ -76,7 +76,7 @@ const ItemPage = () => {
               <li><strong>Lagerstatus:</strong> {item.status ? "I lager" : "Ej i lager"}</li>
             </ul>
           </article>
-          <div className="button-container">
+          <div className="button-container-itempage">
             <Link to="/"><button className="back-button">Tillbaka</button></Link>
           </div>
         </div>

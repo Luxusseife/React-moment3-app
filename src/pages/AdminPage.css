@@ -1,0 +1,14 @@
+.products-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+@media (min-width: 769px) {
+    .products-container {
+        margin: 0 auto;
+    }
+}
