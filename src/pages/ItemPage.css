@@ -1,0 +1,29 @@
+.single-item {
+    background-color: #e5eafa;
+    box-shadow: 2px 2px 4px black;
+    padding: 1rem;
+    margin: 1rem auto;
+    max-width: 400px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.back-button {
+    background-color: #1f3a8d;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.info-list {
+    list-style-type: none;
+    line-height: 1.6;
+}

@@ -1,9 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import HomePage from "./pages/HomePage";
+import ItemPage from "./pages/ItemPage";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+
 
 // Nedan är admin skyddad resurs som endast är åtkomlig efter inloggning.
 const router = createBrowserRouter([
@@ -14,6 +16,10 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <HomePage />
+            },
+            {
+                path: "/item/:id",
+                element: <ItemPage />
             },
             {
                 path: "/admin",

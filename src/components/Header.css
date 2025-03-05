@@ -13,12 +13,12 @@ header {
     max-width: 300px;
 }
 
-ul {
+.nav-menu {
     list-style-type: none;
     text-align: center;
 }
 
-li {
+.nav-menu li {
     display: inline;
     padding: 0.25rem;
 }

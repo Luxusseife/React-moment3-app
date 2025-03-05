@@ -117,7 +117,7 @@ const HomePage = () => {
           {
             // Loopar igenom spel och skriver ut enligt return i Item-komponenten.
             gameItem.map((item) => (
-              <Item item={item} />
+              <Item item={item} key={item._id} />
             ))
           }
         </div>
@@ -127,7 +127,7 @@ const HomePage = () => {
           {
             // Loopar igenom pussel och skriver ut enligt return i Item-komponenten.
             puzzleItem.map((item) => (
-              <Item item={item} />
+              <Item item={item} key={item._id} />
             ))
           }
         </div>

@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./Header.css";
 
@@ -8,10 +8,10 @@ const Header = () => {
 
     return (
         <header>
-            <img id="logo" src="/logo.png" alt="Logotyp" />
+            <Link to="/"><img id="logo" src="/logo.png" alt="Logotyp" /></Link>
 
             <nav>
-                <ul>
+                <ul className="nav-menu">
                     <li><NavLink className="navlink" to="/">Hem</NavLink></li>
                     <li><NavLink className="navlink" to="/admin">Admin</NavLink></li>
                     <li>

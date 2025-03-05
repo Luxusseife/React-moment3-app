@@ -21,7 +21,7 @@ h1 {
     margin: 2rem;
 }
 
-h2 {
+h2:not(article h2) {
     text-align: center;
     margin: 2rem 0 0 0;
 }
