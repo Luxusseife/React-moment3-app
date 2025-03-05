@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import Item from "../components/Item";
+import "./HomePage.css";
 
 // Skapar ett interface för produktstrukturen.
 export interface ItemInterface {
+  _id?: string,
   name: string,
   category: string,
   price: number,
@@ -11,7 +14,8 @@ export interface ItemInterface {
 const HomePage = () => {
 
   // States.
-  const [item, setItem] = useState<ItemInterface[] | []>([]);
+  const [gameItem, setGameItem] = useState<ItemInterface[] | []>([]);
+  const [puzzleItem, setPuzzleItem] = useState<ItemInterface[] | []>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null);
 
@@ -48,23 +52,28 @@ const HomePage = () => {
       const data = await res.json();
 
       // TEST-log.
-      console.log(data);
+      // console.log(data);
 
       // Filtrerar varor i kategorin "Spel".
-      const filteredItems = data.filter((item: ItemInterface) => item.category.toLowerCase() === "spel");
+      const gameItems = data.filter((item: ItemInterface) => item.category.toLowerCase() === "spel");
+
+      // Filtrerar varor i kategorin "Pussel".
+      const puzzleItems = data.filter((item: ItemInterface) => item.category.toLocaleLowerCase() === "pussel");
 
       // Kontrollerar att varor finns lagrade och sätter state därefter.
       // Om listan returneras tom från API:et, sätts state till en tom array och info ges.
       if (data.message === "Inga varor hittades.") {
-        setItem([]);
+        setGameItem([]);
+        setPuzzleItem([]);
         setError("Inga produkter finns lagrade.");
         // Om uppgifter finns lagrade, sätts state till data och felmeddelandet tas bort.
       } else {
-        // Sätter det filtrerade resultatet i state.
-        setItem(filteredItems);
+        // Sätter de filtrerade resultaten i state.
+        setGameItem(gameItems);
+        setPuzzleItem(puzzleItems);
 
         // TEST-log.
-        console.log(filteredItems);
+        // console.log(gameItems, puzzleItems);
 
         // Återställer error-state.
         setError(null);
@@ -86,16 +95,42 @@ const HomePage = () => {
 
       <div className="text-container">
         <p className="welcome-text">
-          Välkommen till KreativLogik – din kreativa oas för spel, pussel, böcker och pyssel!
+          Välkommen till KreativLogik – din kreativa oas för spel och pussel för hela familjen!
         </p>
         <p className="welcome-text">
-          Här hittar du noggrant utvalda produkter som stimulerar både fantasi och logik,
-          för alla som älskar att skapa, utmana sig själva och upptäcka nya världar.
+          Här hittar du noggrant utvalda produkter som stimulerar både kreativitet, fantasi och logik,
+          för alla som älskar att utmana sig själva och upptäcka nya världar.
         </p>
         <p className="welcome-text">
-          Oavsett om du söker efter en ny bok, ett spännande pussel eller en logisk leksak,
+          Oavsett om du söker efter ett nytt pussel, ett spännande spel eller något som kombinerar de två,
           har vi något för dig. Låt kreativiteten flöda och logiken blomstra med våra produkter!
         </p>
+      </div>
+
+      { /* Felmeddelanden. */}
+      {loading && <p>Laddar produkter...</p>}
+      {error && <p>{error}</p>}
+
+      <div className="product-container">
+        <div className="games">
+          <h2>Våra spel</h2>
+          {
+            // Loopar igenom spel och skriver ut enligt return i Item-komponenten.
+            gameItem.map((item) => (
+              <Item item={item} />
+            ))
+          }
+        </div>
+
+        <div className="puzzles">
+          <h2>Våra pussel</h2>
+          {
+            // Loopar igenom pussel och skriver ut enligt return i Item-komponenten.
+            puzzleItem.map((item) => (
+              <Item item={item} />
+            ))
+          }
+        </div>
       </div>
     </>
   )

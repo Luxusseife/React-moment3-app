@@ -1,0 +1,31 @@
+.text-container {
+    width: 100%;
+    max-width: 60ch;
+    margin: 0 auto 1rem auto;
+}
+
+.welcome-text {
+    padding: 0 1rem 1rem 1rem;
+    line-height: 1.6;
+}
+
+.product-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.games, .puzzles {
+    padding: 1rem;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+@media (min-width: 769px) {
+    .product-container {
+        flex-direction: row;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+}
