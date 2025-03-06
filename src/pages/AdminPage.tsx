@@ -158,7 +158,7 @@ const AdminPage = () => {
         const updatedItem = await res.json();
 
         // TEST-logg.
-        console.log("Uppdaterad produkt", updatedItem);
+        // console.log("Uppdaterad produkt", updatedItem);
 
         // Uppdaterar produktlistan efter uppdatering.
         await fetchItems();
@@ -199,14 +199,14 @@ const AdminPage = () => {
           lastAddedProductRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);
       }
+      // Uppdaterar produktlistan efter uppdatering.
+      await fetchItems();
+
       // Återställer formuläret.
       resetForm();
 
       // Återställer felmeddelanden.
       setError("");
-
-      // Uppdaterar produktlistan efter uppdatering.
-      fetchItems();
 
       // Felmeddelande vid fel vid skapande/uppdatering.
     } catch (error) {
@@ -282,7 +282,7 @@ const AdminPage = () => {
         { // Referenser för senast tillagda produkt/nyss uppdaterade produkt.
           item.map((product, index) => (
             <div
-              key={product._id}
+              key={product._id || index}
               ref={(el) => {
                 if (index === item.length - 1) lastAddedProductRef.current = el;
                 if (product._id === itemToEditId) updatedProductRef.current = el;
