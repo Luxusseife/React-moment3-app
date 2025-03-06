@@ -52,7 +52,6 @@ const LoginPage = () => {
       <div className="container">
         <form onSubmit={handleSubmit}>
           <label htmlFor="username">Användarnamn:</label>
-          <br />
           <input
             type="username"
             id="username"
@@ -61,7 +60,6 @@ const LoginPage = () => {
             onChange={(e) => setUsername(e.target.value)} />
           <br />
           <label htmlFor="password">Lösenord:</label>
-          <br />
           <input
             type="password"
             id="password"

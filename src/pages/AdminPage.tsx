@@ -158,7 +158,7 @@ const AdminPage = () => {
         const updatedItem = await res.json();
 
         // TEST-logg.
-        // console.log("Uppdaterad produkt", updatedItem);
+        console.log("Uppdaterad produkt", updatedItem);
 
         // Uppdaterar produktlistan efter uppdatering.
         await fetchItems();

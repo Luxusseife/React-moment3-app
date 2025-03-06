@@ -1,8 +1,4 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     margin: 0 auto;
     border: 2px solid #dadada;
     border-radius: 5px;
@@ -14,6 +10,7 @@ form {
     padding: 1rem;
     width: 100%;
 }
+
 
 input {
     width: 100%;
