@@ -1,5 +1,5 @@
 import { useAuth } from "../context/AuthContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ItemInterface } from "../types/item.types";
 import Item from "../components/Item";
 import "./AdminPage.css";
@@ -9,9 +9,14 @@ const AdminPage = () => {
   // Använder user från contextet.
   const { user } = useAuth();
 
+  // Referenser. 
+  const editRef = useRef<HTMLHeadingElement | null>(null);
+  const lastAddedProductRef = useRef<HTMLDivElement | null>(null);
+  const updatedProductRef = useRef<HTMLDivElement | null>(null);
+
   // States för AdminPage.
   const [item, setItem] = useState<ItemInterface[] | []>([]);
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -26,6 +31,13 @@ const AdminPage = () => {
   useEffect(() => {
     fetchItems();
   }, []);
+
+  // Scrollar till den nyss uppdaterade produkten efter att listan har uppdaterats.
+  useEffect(() => {
+    if (updatedProductRef.current) {
+      updatedProductRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [item]);
 
   // Hämtar produkter från API:et.
   const fetchItems = async () => {
@@ -92,6 +104,9 @@ const AdminPage = () => {
       setPrice(item.price.toString());
       setStatus(item.status);
       setItemToEditId(item._id);
+
+      // Scrolla till formuläret när en produkt redigeras
+      editRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       // Om något mot förmodan går fel med ID här...
     } else {
       console.error("Denna produkt har inget _id: ", item);
@@ -146,13 +161,18 @@ const AdminPage = () => {
         console.log("Uppdaterad produkt", updatedItem);
 
         // Uppdaterar produktlistan efter uppdatering.
-        fetchItems();
+        await fetchItems();
+
+        // Scrollar till den uppdaterade produkten efter en kort timeout.
+        setTimeout(() => {
+          updatedProductRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          // Sätter inhämtat objekt-ID till null när uppdateringen gjorts.
+          setItemToEditId(null);
+        }, 200);
 
         // Återställer formuläret efter uppdatering.
         resetForm();
 
-        // Sätter inhämtat objekt-ID till null när uppdateringen gjorts.
-        setItemToEditId(null);
         // Om inget ID hämtats så skapas istället en ny produkt.
       } else {
 
@@ -173,6 +193,11 @@ const AdminPage = () => {
         // Vid lyckat svar uppdateras listan med ny produkt.
         const newAndSavedItem = await res.json();
         setItem((prevItems) => [...prevItems, newAndSavedItem]);
+
+        // Scrollar till senast tillagda produkt efter en kort timeout.
+        setTimeout(() => {
+          lastAddedProductRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
       }
       // Återställer formuläret.
       resetForm();
@@ -205,8 +230,15 @@ const AdminPage = () => {
     <div>
       <h1>Välkommen, {user ? user.username : ""}!</h1>
 
-      {/* Om användaren skapar en ny produkt visas en rubrik, vid uppdatering visas en annan. */}
-      <h2>{itemToEditId ? "Redigera produkt" : "Lägg till ny produkt"}</h2>
+      {/* Om användaren uppdaterar en produkt visas rubriken med produktnamnet, vid skapande endast rubriken. */}
+      <h2 ref={editRef} >{itemToEditId ? (
+        <>
+          Redigera produkt: <br />
+          {item.find((p) => p._id === itemToEditId)?.name || ""}
+        </>
+      ) : (
+        "Lägg till ny produkt"
+      )}</h2>
 
       <div className="form-container">
         <form onSubmit={handleSubmit} className="form">
@@ -247,12 +279,18 @@ const AdminPage = () => {
         { /* Felmeddelanden. */}
         {loading && <p>Laddar produkter...</p>}
         {error && <p className="error">{error}</p>}
-        {
-          // Loopar igenom produkter och skriver ut enligt return i Item-komponenten.
-          item.map((item) => (
-            <Item item={item} key={item._id} isLink={false} onUpdate={fetchItems} onEdit={handleEdit} />
-          ))
-        }
+        { // Referenser för senast tillagda produkt/nyss uppdaterade produkt.
+          item.map((product, index) => (
+            <div
+              key={product._id}
+              ref={(el) => {
+                if (index === item.length - 1) lastAddedProductRef.current = el;
+                if (product._id === itemToEditId) updatedProductRef.current = el;
+              }}
+            >
+              <Item item={product} isLink={false} onUpdate={fetchItems} onEdit={handleEdit} />
+            </div>
+          ))}
       </div>
     </div>
   )
