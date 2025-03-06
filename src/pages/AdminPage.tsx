@@ -277,7 +277,7 @@ const AdminPage = () => {
         <h2>Alla produkter</h2>
         <br />
         { /* Felmeddelanden. */}
-        {loading && <p>Laddar produkter...</p>}
+        {loading && <p className="message">Laddar produkter...</p>}
         {error && <p className="error">{error}</p>}
         { // Referenser för senast tillagda produkt/nyss uppdaterade produkt.
           item.map((product, index) => (

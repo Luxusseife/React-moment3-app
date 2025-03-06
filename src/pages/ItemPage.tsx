@@ -60,9 +60,9 @@ const ItemPage = () => {
   return (
     <div>
       {/* Felmeddelanden/meddelanden. */}
-      {loading && <p>Laddar produkt...</p>}
-      {error && <p>{error}</p>}
-      {!item && !loading && !error && <p>Produkten hittades inte.</p>}
+      {loading && <p className="message">Laddar produkt...</p>}
+      {error && <p className="error">{error}</p>}
+      {!item && !loading && !error && <p className="message">Produkten hittades inte.</p>}
 
       { // Om produkten hittas...
       item && (

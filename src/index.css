@@ -35,6 +35,13 @@ h2:not(article h2) {
     border-radius: 5px;
 }
 
+.message {
+    margin: 1rem auto;
+    text-align: center;
+    line-height: 1.5;
+    border-radius: 5px;
+}
+
 .error {
     margin: 1rem auto;
     text-align: center;

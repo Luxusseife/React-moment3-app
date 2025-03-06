@@ -123,7 +123,7 @@ const HomePage = () => {
               Om nytt setGameError gjorts, visas felmeddelande. 
               Om allt är OK, loopas spel igenom och skrivs ut. */}
           {loadingGames ? (
-            <p>Laddar in spel. Det kan ta en liten stund...</p>
+            <p className="message">Laddar in spel. Det kan ta en liten stund...</p>
           ) : gameError ? (
             <p className="error">{gameError}</p>
           ) : (
@@ -140,7 +140,7 @@ const HomePage = () => {
               Om nytt setPuzzleError gjorts, visas felmeddelande. 
               Om allt är OK, loopas pussel igenom och skrivs ut. */}
           {loadingPuzzles ? (
-            <p>Laddar in pussel. Det kan ta en liten stund...</p>
+            <p className="message">Laddar in pussel. Det kan ta en liten stund...</p>
           ) : puzzleError ? (
             <p className="error">{puzzleError}</p>
           ) : (

@@ -65,7 +65,7 @@ const Item = ({ item, isLink = true, onUpdate, onEdit }: { item: ItemInterface, 
                         <p><strong>Lagerstatus:</strong> {item.status ? "I lager" : "Ej i lager"}</p>
                     </div>
                     <br />
-                    {error && <p className="error-message">{error}</p>}
+                    {error && <p className="error">{error}</p>}
                     <br />
                     <div className="button-container-item">
                         <button className="update-button" onClick={() => onEdit(item)}>Ändra</button>
