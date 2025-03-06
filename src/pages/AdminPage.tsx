@@ -51,7 +51,7 @@ const AdminPage = () => {
       setError("");
 
       // Fetch-anrop med metoden GET (hämta/visa).
-      const res = await fetch("http://localhost:3001/item", {
+      const res = await fetch("https://react-moment3-api-k96z.onrender.com/item", {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -141,7 +141,7 @@ const AdminPage = () => {
       if (itemToEditId) {
 
         // Fetch-anrop med metoden PUT.
-        const res = await fetch(`http://localhost:3001/item/${itemToEditId}`, {
+        const res = await fetch(`https://react-moment3-api-k96z.onrender.com/item/${itemToEditId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -177,7 +177,7 @@ const AdminPage = () => {
       } else {
 
         // Fetch-anrop med metoden POST (skapa/lagra).
-        const res = await fetch("http://localhost:3001/item", {
+        const res = await fetch("https://react-moment3-api-k96z.onrender.com/item", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

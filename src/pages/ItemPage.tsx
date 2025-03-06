@@ -25,7 +25,7 @@ const ItemPage = () => {
         setError("");
 
         // Fetch-anrop.
-        const res = await fetch(`http://localhost:3001/item/${id}`);
+        const res = await fetch(`https://react-moment3-api-k96z.onrender.com/item/${id}`);
 
         // Kastar ett fel och visar felmeddelande vid oväntat svar.
         if (!res.ok) {

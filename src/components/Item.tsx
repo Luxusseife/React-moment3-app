@@ -18,7 +18,7 @@ const Item = ({ item, isLink = true, onUpdate, onEdit }: { item: ItemInterface, 
         // Gör ett anrop mot API:et.
         try {
             // Fetch-anrop med metoden DELETE (radera).
-            const res = await fetch(`http://localhost:3001/item/${item._id}`, {
+            const res = await fetch(`https://react-moment3-api-k96z.onrender.com/item/${item._id}`, {
                 method: "DELETE"
             });
 

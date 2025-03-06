@@ -34,7 +34,7 @@ const HomePage = () => {
       setPuzzleError("");
 
       // Fetch-anrop med metoden GET (visa/läsa).
-      const res = await fetch("http://localhost:3001/item", {
+      const res = await fetch("https://react-moment3-api-k96z.onrender.com/item", {
         method: "GET",
         headers: {
           "Content-Type": "application/json"

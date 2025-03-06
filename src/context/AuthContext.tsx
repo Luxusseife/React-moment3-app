@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // API-anrop mot backend-servern.
         try {
             // Fetch-anrop med metoden POST (skapa/lagra).
-            const res = await fetch("http://localhost:3001/login", {
+            const res = await fetch("https://react-moment3-api-k96z.onrender.com/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         // Försöker autentisera användaren genom API-anrop till servern.
         try {
-            const res = await fetch("http://localhost:3001/validate-token", {
+            const res = await fetch("https://react-moment3-api-k96z.onrender.com/validate-token", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
