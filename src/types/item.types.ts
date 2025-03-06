@@ -5,4 +5,4 @@ export interface ItemInterface {
     category: string,
     price: number,
     status: boolean
-  }
+}

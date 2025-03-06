@@ -6,14 +6,23 @@ import "./AdminPage.css";
 
 const AdminPage = () => {
 
+  // Använder user från contextet.
   const { user } = useAuth();
 
-  // States.
+  // States för AdminPage.
   const [item, setItem] = useState<ItemInterface[] | []>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  // Anropar inhämtningsfunktionen vid första renderingen.
+  // States för formulär.
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("Ingen kategori");
+  const [price, setPrice] = useState("");
+  const [status, setStatus] = useState(true);
+  const [itemToEditId, setItemToEditId] = useState<string | null>(null);
+
+  // Anropar inhämtningsfunktionen (en gång).
   useEffect(() => {
     fetchItems();
   }, []);
@@ -29,7 +38,7 @@ const AdminPage = () => {
       // Återställer felmeddelande.
       setError("");
 
-      // Fetch-anrop.
+      // Fetch-anrop med metoden GET (hämta/visa).
       const res = await fetch("http://localhost:3001/item", {
         method: "GET",
         headers: {
@@ -37,19 +46,19 @@ const AdminPage = () => {
         }
       });
 
-      // Felkontroll vid oväntat svar.
+      // Kastar ett fel och visar felmeddelande vid oväntat svar.
       if (!res.ok) {
         throw Error("Det blev ett oväntat fel: " + res.status);
       }
 
-      // Fortsätter anropet och hämtar ut data.
+      // Vid OK fortsätter anropet och data hämtas.
       const data = await res.json();
 
       // TEST-log.
-      //console.log(data);
+      // console.log("Dessa produkter finns lagrade:", data);
 
       // Kontrollerar att varor finns lagrade och sätter state därefter.
-      // Om listan returneras tom från API:et, sätts state till en tom array och info ges.
+      // Om collection returneras tom från API:et, sätts state till en tom array och info ges.
       if (data.message === "Inga varor hittades.") {
         setItem([]);
         setError("Inga produkter finns lagrade.");
@@ -61,10 +70,12 @@ const AdminPage = () => {
         // Återställer error-state.
         setError(null);
       }
-      // Felkontroll vid inhämtningsfel.
+      // Felmeddelande vid inhämtningsfel.
     } catch (error) {
-      console.log(error);
       setError("Det blev ett fel vid inhämtning av produkter.")
+
+      // TEST-logg.
+      // console.log("Ett fel uppstod: ", error);
 
       // Sätter laddnings-state till false när datainhämtningen slutförts.
     } finally {
@@ -72,21 +83,174 @@ const AdminPage = () => {
     }
   }
 
+  // Funktion som redigerar en produkt i formuläret.
+  const handleEdit = (item: ItemInterface) => {
+    // Sätter state till aktuell data efter kontroll av att ID är hämtat.
+    if (item._id) {
+      setName(item.name);
+      setCategory(item.category);
+      setPrice(item.price.toString());
+      setStatus(item.status);
+      setItemToEditId(item._id);
+      // Om något mot förmodan går fel med ID här...
+    } else {
+      console.error("Denna produkt har inget _id: ", item);
+    }
+  };
+
+  // Funktion som hanterar submit av formuläret.
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // Förhindrar defaultbeteende.
+    e.preventDefault();
+
+    // Validering av formulärfält. Namn och pris måste anges!
+    if (!name || !price) {
+      setFormError("Produktnamn och pris måste fyllas i.");
+      return;
+    }
+
+    // Skapar ett nytt objekt med egenskaper från ItemInterface.
+    const newItem: ItemInterface = {
+      name,
+      category,
+      price: Number(price),
+      status
+    };
+
+    // Gör ett anrop mot API:et. PUT-anrop vid uppdatering och POST-anrop vid skapande.
+    try {
+      // Sätter laddnings-state till true.
+      setLoading(true);
+
+      // Om användaren valt att uppdatera och ett ID hämtats...
+      if (itemToEditId) {
+
+        // Fetch-anrop med metoden PUT.
+        const res = await fetch(`http://localhost:3001/item/${itemToEditId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newItem),
+        });
+
+        // Kastar ett fel och visar felmeddelande vid oväntat svar.
+        if (!res.ok) {
+          throw new Error("Produkten kunde inte uppdateras: " + res.status);
+        }
+
+        // Fortsätter anropet och hämtar ut data.
+        const updatedItem = await res.json();
+
+        // TEST-logg.
+        console.log("Uppdaterad produkt", updatedItem);
+
+        // Uppdaterar produktlistan efter uppdatering.
+        fetchItems();
+
+        // Återställer formuläret efter uppdatering.
+        resetForm();
+
+        // Sätter inhämtat objekt-ID till null när uppdateringen gjorts.
+        setItemToEditId(null);
+        // Om inget ID hämtats så skapas istället en ny produkt.
+      } else {
+
+        // Fetch-anrop med metoden POST (skapa/lagra).
+        const res = await fetch("http://localhost:3001/item", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newItem),
+        });
+
+        // Kastar ett fel och visar felmeddelande vid oväntat svar.
+        if (!res.ok) {
+          throw new Error("Produkten kunde inte läggas till: " + res.status);
+        }
+
+        // Vid lyckat svar uppdateras listan med ny produkt.
+        const newAndSavedItem = await res.json();
+        setItem((prevItems) => [...prevItems, newAndSavedItem]);
+      }
+      // Återställer formuläret.
+      resetForm();
+
+      // Återställer felmeddelanden.
+      setError("");
+
+      // Uppdaterar produktlistan efter uppdatering.
+      fetchItems();
+
+      // Felmeddelande vid fel vid skapande/uppdatering.
+    } catch (error) {
+      setError("Något gick fel vid lagring av produkten.")
+
+      // Sätter laddnings-state till false när datainhämtningen slutförts.
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Funktion som återställer formuläret vid lyckad lagring/uppdatering.
+  const resetForm = () => {
+    setName("");
+    setCategory("Ingen kategori");
+    setPrice("");
+    setStatus(true);
+  };
+
   return (
     <div>
       <h1>Välkommen, {user ? user.username : ""}!</h1>
 
-      { /* Felmeddelanden. */}
-      {loading && <p>Laddar produkter...</p>}
-      {error && <p>{error}</p>}
+      {/* Om användaren skapar en ny produkt visas en rubrik, vid uppdatering visas en annan. */}
+      <h2>{itemToEditId ? "Redigera produkt" : "Lägg till ny produkt"}</h2>
+
+      <div className="form-container">
+        <form onSubmit={handleSubmit} className="form">
+          <label htmlFor="name">Produktnamn:</label>
+          <input type="text" name="name" id="name" value={name} onChange={(e) => setName(e.target.value)} />
+          <br />
+          <label htmlFor="price">Pris:</label>
+          <input type="number" name="price" id="price" value={price} onChange={(e) => setPrice(e.target.value)} />
+          <br />
+
+          <label htmlFor="category">Kategori:</label>
+          <select name="category" id="category" value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option>Ingen kategori</option>
+            <option>Spel</option>
+            <option>Pussel</option>
+          </select>
+          <br />
+
+          <label htmlFor="status">Lagerstatus:</label>
+          <select name="status" id="status" value={status ? "I lager" : "Ej i lager"} onChange={(e) => setStatus(e.target.value === "I lager")}>
+            <option value="I lager">I lager</option>
+            <option value="Ej i lager">Ej i lager</option>
+          </select>
+
+          <br />
+          {formError && <p className="error">{formError}</p>}
+          <br />
+          {/* Om användaren skapar en ny produkt visas en knapptext, vid uppdatering visas en annan. */}
+          <button type="submit" className="submit"> {itemToEditId ? "Uppdatera produkt" : "Lägg till produkt"}</button>
+        </form>
+      </div>
+
+      <div className="line"></div>
 
       <div className="products-container">
         <h2>Alla produkter</h2>
         <br />
+        { /* Felmeddelanden. */}
+        {loading && <p>Laddar produkter...</p>}
+        {error && <p className="error">{error}</p>}
         {
           // Loopar igenom produkter och skriver ut enligt return i Item-komponenten.
           item.map((item) => (
-            <Item item={item} key={item._id} isLink={false} />
+            <Item item={item} key={item._id} isLink={false} onUpdate={fetchItems} onEdit={handleEdit} />
           ))
         }
       </div>

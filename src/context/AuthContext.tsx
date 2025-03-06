@@ -20,6 +20,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         // API-anrop mot backend-servern.
         try {
+            // Fetch-anrop med metoden POST (skapa/lagra).
             const res = await fetch("http://localhost:3001/login", {
                 method: "POST",
                 headers: {
@@ -53,15 +54,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Tar bort token från localStorage.
         localStorage.removeItem("token");
 
-        // Ställer user till null, dvs. reset av användare.
+        // Sätter user till null, dvs. reset av användare.
         setUser(null);
     }
 
     // Validerar token för inloggad användare.
     const validateToken = async () => {
+        // Hämtar token från localStorage.
         const token = localStorage.getItem("token");
 
-        // Kontrollerar om token finns lagrad.
+        // Om token inte hittas, returneras vyn.
         if (!token) {
             return;
         }
@@ -76,11 +78,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 }
             });
 
-            // Vid lyckat anrop och positivt svar..
+            // Vid lyckat anrop och positivt svar...
             if (res.ok) {
                 const data = await res.json();
 
-                // Ställer in user som aktuell användare.
+                // Sätter hämtad user som aktuell användare.
                 setUser(data.user);
             }
         // Vid autentiseringsfel/ogiltig token...
@@ -88,7 +90,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             // Tar bort token från localStorage.
             localStorage.removeItem("token");
 
-            // Ställer user till null, dvs. reset av användare.
+            // Sätter user till null, dvs. reset av användare.
             setUser(null);
         }
     }

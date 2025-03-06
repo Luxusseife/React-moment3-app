@@ -16,7 +16,7 @@ const LoginPage = () => {
   // Ställer i navigate.
   const navigate = useNavigate();
 
-  // Kontrollerar om det finns en inloggad användare.
+  // Kontrollerar om det finns en inloggad användare. Körs varje gång user ändras.
   useEffect(() => {
     if (user) {
       navigate("/admin");

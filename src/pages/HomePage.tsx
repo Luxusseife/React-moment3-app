@@ -5,13 +5,17 @@ import { ItemInterface } from "../types/item.types";
 
 const HomePage = () => {
 
-  // States.
+  // States för spel.
   const [gameItem, setGameItem] = useState<ItemInterface[] | []>([]);
-  const [puzzleItem, setPuzzleItem] = useState<ItemInterface[] | []>([]);
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null);
+  const [loadingGames, setLoadingGames] = useState<boolean>(false)
+  const [gameError, setGameError] = useState<string | null>(null);
 
-  // Anropar inhämtningsfunktionen vid första renderingen.
+  // States för pussel.
+  const [puzzleItem, setPuzzleItem] = useState<ItemInterface[] | []>([]);
+  const [loadingPuzzles, setLoadingPuzzles] = useState<boolean>(false)
+  const [puzzleError, setPuzzleError] = useState<string | null>(null);
+
+  // Anropar inhämtningsfunktionen (en gång).
   useEffect(() => {
     fetchItems();
   }, []);
@@ -21,13 +25,15 @@ const HomePage = () => {
 
     // Gör ett anrop mot API:et.
     try {
-      // Sätter laddnings-state till true.
-      setLoading(true);
+      // Sätter laddnings-state till true för båda kategorier.
+      setLoadingGames(true);
+      setLoadingPuzzles(true);
 
-      // Återställer felmeddelande.
-      setError("");
+      // Återställer felmeddelande för båda kategorier.
+      setGameError("");
+      setPuzzleError("");
 
-      // Fetch-anrop.
+      // Fetch-anrop med metoden GET (visa/läsa).
       const res = await fetch("http://localhost:3001/item", {
         method: "GET",
         headers: {
@@ -35,49 +41,60 @@ const HomePage = () => {
         }
       });
 
-      // Felkontroll vid oväntat svar.
+      // Kastar ett fel och visar felmeddelande vid oväntat svar.
       if (!res.ok) {
         throw Error("Det blev ett oväntat fel: " + res.status);
       }
 
-      // Fortsätter anropet och hämtar ut data.
+      // Vid OK fortsätter anropet och data hämtas.
       const data = await res.json();
 
-      // TEST-log.
-      // console.log(data);
+      // Om API:et returnerar TOM collection...
+      if (data.message === "Inga varor hittades.") {
+        setGameError("Inga spel finns i lager just nu.");
+        setPuzzleError("Inga pussel finns i lager just nu.");
+        setGameItem([]); 
+        setPuzzleItem([]);
+        return;
+      }
 
-      // Filtrerar varor i kategorin "Spel".
+      // TEST-logg.
+      // console.log("Denna data finns lagrad", data);
+
+      // Filtrerar ut varor från kategorin "Spel" ur hämtad data.
       const gameItems = data.filter((item: ItemInterface) => item.category.toLowerCase() === "spel");
 
-      // Filtrerar varor i kategorin "Pussel".
+      // Filtrerar ut varor från kategorin "Pussel" ur hämtad data.
       const puzzleItems = data.filter((item: ItemInterface) => item.category.toLocaleLowerCase() === "pussel");
 
-      // Kontrollerar att varor finns lagrade och sätter state därefter.
-      // Om listan returneras tom från API:et, sätts state till en tom array och info ges.
-      if (data.message === "Inga varor hittades.") {
-        setGameItem([]);
-        setPuzzleItem([]);
-        setError("Inga produkter finns lagrade.");
-        // Om uppgifter finns lagrade, sätts state till data och felmeddelandet tas bort.
-      } else {
-        // Sätter de filtrerade resultaten i state.
-        setGameItem(gameItems);
-        setPuzzleItem(puzzleItems);
+      // Sätter de filtrerade resultaten som state för respektive kategori.
+      setGameItem(gameItems);
+      setPuzzleItem(puzzleItems);
 
-        // TEST-log.
-        // console.log(gameItems, puzzleItems);
+      // TEST-logg.
+      // console.log("Spel lagrade", gameItems);
+      // console.log("Pussel lagrade", puzzleItems);
 
-        // Återställer error-state.
-        setError(null);
+      // Kontrollerar att det finns lagrade varor i aktuella kategorier.
+      if (gameItems.length === 0) {
+        setGameError("Vi har inga spel i lager just nu.");
       }
-      // Felkontroll vid inhämtningsfel.
+      if (puzzleItems.length === 0) {
+        setPuzzleError("Vi har inga pussel i lager just nu.");
+      }
+
+      // Felmeddelanden vid inhämtningsfel.
     } catch (error) {
-      console.log(error);
-      setError("Det blev ett fel vid inhämtning av produkter.")
+      setGameError("Det blev ett fel vid inhämtning av spel.");
+      setPuzzleError("Det blev ett fel vid inhämtning av pussel.");
+
+      // TEST-logg.
+      // console.log("Detta fel uppstod: ", error);
 
       // Sätter laddnings-state till false när datainhämtningen slutförts.
     } finally {
-      setLoading(false);
+      setLoadingGames(false);
+      setLoadingPuzzles(false);
     }
   }
 
@@ -99,29 +116,39 @@ const HomePage = () => {
         </p>
       </div>
 
-      { /* Felmeddelanden. */}
-      {loading && <p>Laddar produkter...</p>}
-      {error && <p>{error}</p>}
-
       <div className="product-container">
         <div className="games">
           <h2>Våra spel</h2>
-          {
+          {/* Om loadingState för spel är true, visas meddelande. 
+              Om nytt setGameError gjorts, visas felmeddelande. 
+              Om allt är OK, loopas spel igenom och skrivs ut. */}
+          {loadingGames ? (
+            <p>Laddar in spel. Det kan ta en liten stund...</p>
+          ) : gameError ? (
+            <p className="error">{gameError}</p>
+          ) : (
             // Loopar igenom spel och skriver ut enligt return i Item-komponenten.
             gameItem.map((item) => (
-              <Item item={item} key={item._id} isLink={true} />
+              <Item item={item} key={item._id} isLink={true} onUpdate={fetchItems} onEdit={fetchItems} />
             ))
-          }
+          )}
         </div>
 
         <div className="puzzles">
           <h2>Våra pussel</h2>
-          {
+          {/* Om loadingState för pussel är true, visas meddelande. 
+              Om nytt setPuzzleError gjorts, visas felmeddelande. 
+              Om allt är OK, loopas pussel igenom och skrivs ut. */}
+          {loadingPuzzles ? (
+            <p>Laddar in pussel. Det kan ta en liten stund...</p>
+          ) : puzzleError ? (
+            <p className="error">{puzzleError}</p>
+          ) : (
             // Loopar igenom pussel och skriver ut enligt return i Item-komponenten.
             puzzleItem.map((item) => (
-              <Item item={item} key={item._id} isLink={true} />
+              <Item item={item} key={item._id} isLink={true} onUpdate={fetchItems} onEdit={fetchItems} />
             ))
-          }
+          )}
         </div>
       </div>
     </>

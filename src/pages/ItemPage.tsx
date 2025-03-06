@@ -11,7 +11,7 @@ const ItemPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Anropar inhämtningsfunktionen vid första renderingen.
+  // Anropar inhämtningsfunktionen (varje gång id ändras).
   useEffect(() => {
 
     // Hämtar enskild produkt från API:et.
@@ -27,25 +27,26 @@ const ItemPage = () => {
         // Fetch-anrop.
         const res = await fetch(`http://localhost:3001/item/${id}`);
 
-        // Felkontroll vid oväntat svar.
+        // Kastar ett fel och visar felmeddelande vid oväntat svar.
         if (!res.ok) {
-          throw new Error("Produkten kunde tyvärr inte hämtas...");
+          throw new Error("Produkten kunde tyvärr inte hämtas. Se varför här: " + res.status);
         }
 
         // Fortsätter anropet och hämtar ut data.
         const data = await res.json();
 
         // TEST-logg.
-        // console.log(data.foundItem);
+        // console.log("Vald produkt: ", data.foundItem);
 
         // Sätter resultatet i state.
         setItem(data.foundItem);
 
-        // Felkontroll vid inhämtningsfel. 
+        // Felmeddelande vid inhämtningsfel. 
       } catch (error) {
+        setError("Ett fel inträffade vid hämtning av produkten. Försök igen!");
+
         // TEST-logg.
         // console.error("Fel vid hämtning:", error);
-        setError("Ett fel inträffade vid hämtning av produkten. Försök igen!");
 
         // Sätter laddnings-state till false när datainhämtningen slutförts.
       } finally {
