@@ -206,7 +206,7 @@ const AdminPage = () => {
       resetForm();
 
       // Återställer felmeddelanden.
-      setError("");
+      setError(null);
 
       // Felmeddelande vid fel vid skapande/uppdatering.
     } catch (error) {
